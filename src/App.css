@@ -1,6 +1,9 @@
 .App {
   text-align: center;
 }
+body {
+  background-color: saddlebrown;
+}
 
 .App-logo {
   height: 40px;
@@ -26,7 +29,7 @@
 .New {
   width: 100%;
   /* border: 1px solid black; */
-  height: 100vh;
+  height: 80vh;
 }
 
 .controls {

@@ -9,7 +9,7 @@ Title: Sci Fi Robotic Arm
 import React, { useRef } from "react";
 import { useGLTF } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
-import robotScene from "../assets/sci_fi_robotic_arm.glb";
+import robotScene from "../assets/3d/robotic_arm.glb";
 import { a } from "@react-spring/three";
 const RobotArm = (props) => {
   const robotRef = useRef(null);
