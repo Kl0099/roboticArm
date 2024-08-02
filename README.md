@@ -1,8 +1,23 @@
-# React + Vite
+# [Robotic Arm Controller App](https://robotic-arm-jet.vercel.app)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is a web application built using React, Vite, and Three.js. The app features a 3D model of a robotic arm that users can control using buttons. Users can also save the current state/position of the arm's angles to a file.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- 3D model of a robotic arm
+- Control the rotation of the arm using buttons
+- Save the arm's current state/position to a file
+
+## Libraries Used
+
+- [@react-spring/three](https://github.com/pmndrs/react-spring)
+- [@react-three/drei](https://github.com/pmndrs/drei)
+- [@react-three/fiber](https://github.com/pmndrs/react-three-fiber)
+- [file-saver](https://github.com/eligrey/FileSaver.js)
+- [react-dom](https://reactjs.org/docs/react-dom.html)
+- [react-webcam](https://github.com/mozmorris/react-webcam)
+- [three](https://threejs.org/)
+
+
+![image](https://github.com/user-attachments/assets/a152963a-2900-4eb5-9738-6256bd755c5a)
+
