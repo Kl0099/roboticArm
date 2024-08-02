@@ -9,14 +9,17 @@ const Experience = () => {
   const [angles, setAngles] = useState(0);
   const [rotete, setRotet] = useState(0);
   const [circular, setCircular] = useState(0);
-  const [bottomArmRotation, setBottomArmRotation] = useState(0);
-  const [topArmRotation, settopArmRotation] = useState(0);
+  const [bottomArmRotation, setBottomArmRotation] = useState([0, 0, 0]);
+  const [topArmRotation, settopArmRotation] = useState([0, 0, 0]);
+  const [isNagative, setIsNagative] = useState(false);
   return (
     <div
       style={{
         backgroundColor: "palegreen",
         height: "80vh",
         width: "100%",
+        flexWrap: "wrap",
+        display: "flex",
       }}
     >
       <Canvas style={isRotating ? { cursor: "grabbing" } : { cursor: "grab" }}>
@@ -41,39 +44,89 @@ const Experience = () => {
             rotete={rotete}
             setBottomArmRotation={setBottomArmRotation}
             bottomArmRotation={bottomArmRotation}
+            isNagative={isNagative}
+            setIsNagative={setIsNagative}
           />
           <OrbitControls />
         </Suspense>
       </Canvas>
       <div style={{ display: "flex", justifyContent: "space-around" }}>
-        <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+        <div
+          style={{
+            display: "flex",
+            width: "350px",
+            border: "1px solid black",
+            flexDirection: "column",
+            gap: "2px",
+            backgroundColor: "wheat",
+            color: "black",
+          }}
+        >
           {" "}
           <span>
-            Bottom Arm Rotation around X axis : {Math.abs(bottomArmRotation[0])}
+            Bottom Arm Rotation around X axis :{" "}
+            {bottomArmRotation[0].toFixed(3)} deg
           </span>
           <span>
-            Top Arm Rotation around X axis : {Math.abs(topArmRotation[0])}
+            Top Arm Rotation around X axis :{" "}
+            {topArmRotation[0].toFixed(3) < 0
+              ? (Math.PI / 180 - topArmRotation[0].toFixed(3)).toFixed(3)
+              : topArmRotation[0].toFixed(3)}{" "}
+            deg
           </span>
+          <div>
+            <SaveFile
+              bottomArmRotation={bottomArmRotation}
+              topArmRotation={topArmRotation}
+            />
+          </div>
         </div>
-        <div style={{ display: "flex" }}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "10px",
+          }}
+        >
           {" "}
-          <NewButton
-            title={"X axis Arm2 Rotation"}
-            onClick={() => setRotet((prevRotete) => prevRotete + 0.003)}
-          />
-          <NewButton
-            title={"circuler rotete"}
-            onClick={() => setCircular((prevRotete) => prevRotete + 0.003)}
-          />
-          <NewButton
-            title={"X axis Arm1 rotation"}
-            onClick={() => setAngles((prevRotete) => prevRotete + 0.003)}
-          />
+          <div style={{ display: "flex", flexWrap: "wrap" }}>
+            <NewButton
+              title={"X axis Arm2 Rotation +"}
+              onClick={() => setRotet((prevRotete) => prevRotete + 0.003)}
+            />
+            <NewButton
+              title={"circuler rotete +"}
+              onClick={() => setCircular((prevRotete) => prevRotete + 0.003)}
+            />
+            <NewButton
+              title={"X axis Arm1 rotation +"}
+              onClick={() => setAngles((prevRotete) => prevRotete + 0.003)}
+            />
+          </div>
+          <div style={{ display: "flex", flexWrap: "wrap" }}>
+            <NewButton
+              title={"X axis Arm2 Rotation -"}
+              onClick={() => {
+                setIsNagative(true);
+                setRotet((prevRotete) => prevRotete - 0.003);
+              }}
+            />
+            <NewButton
+              title={"circuler rotete -"}
+              onClick={() => {
+                setIsNagative(true);
+                setCircular((prevRotete) => prevRotete - 0.003);
+              }}
+            />
+            <NewButton
+              title={"X axis Arm1 rotation -"}
+              onClick={() => {
+                setIsNagative(true);
+                setAngles((prevRotete) => prevRotete - 0.003);
+              }}
+            />
+          </div>
         </div>
-        <SaveFile
-          bottomArmRotation={bottomArmRotation}
-          topArmRotation={topArmRotation}
-        />
       </div>
     </div>
   );

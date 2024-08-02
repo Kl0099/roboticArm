@@ -17,6 +17,8 @@ const Robot = ({
   rotete,
   setBottomArmRotation,
   bottomArmRotation,
+  isNagative,
+  setIsNagative,
   ...props
 }) => {
   const group = useRef();
@@ -47,13 +49,28 @@ const Robot = ({
   rotationMatrixTopArm.makeRotationFromEuler(initialEulerTopArm);
 
   useEffect(() => {
-    nodes.arm2_03.rotation.y += circular; // or any other logic for rotation  yes this is one joint  and y
+    //
+    //
+    if (isNagative) {
+      nodes.arm2_03.rotation.y -= Math.abs(circular);
+      setIsNagative(false);
+    } else {
+      nodes.arm2_03.rotation.y += Math.abs(circular);
+    }
+
+    // or any other logic for rotation  yes this is one joint  and y
   }, [circular]);
   // for axis rotaion
   useEffect(() => {
     //change this and find the angle
     //angle 1
-    nodes.arm3_04.rotation.x += angles; // or any other logic for rotation  yes this is one joint  and y
+    // or any other logic for rotation  yes this is one joint  and y
+    if (isNagative) {
+      nodes.arm3_04.rotation.x -= Math.abs(angles);
+      setIsNagative(false);
+    } else {
+      nodes.arm3_04.rotation.x += Math.abs(angles);
+    }
     setendingTopArm({
       x: nodes.arm3_04.rotation.x,
       y: nodes.arm3_04.rotation.y,
@@ -62,7 +79,12 @@ const Robot = ({
   }, [angles]);
   // for model rotation
   useEffect(() => {
-    nodes.arm2_03.rotation.x += rotete; // or any other logic for rotation  yes this is one joint  and y
+    if (isNagative) {
+      nodes.arm2_03.rotation.x -= Math.abs(rotete);
+      setIsNagative(false);
+    } else {
+      nodes.arm2_03.rotation.x += Math.abs(rotete);
+    } // or any other logic for rotation  yes this is one joint  and y
     // console.log(nodes.arm2_03.rotation.x);
     setEnding({
       x: nodes.arm2_03.rotation.x,
@@ -106,7 +128,7 @@ const Robot = ({
         rotationMatrixTopArm,
         "XYZ"
       );
-      settopArmRotation(finalEuler.toArray().map(degToRad));
+      settopArmRotation(finalEuler.toArray().map(radToDeg));
     }
   }, [angles, endingTopArm]);
 

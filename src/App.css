@@ -8,13 +8,13 @@ body {
 .App-logo {
   height: 40px;
   position: absolute;
-  width: 60px;
+  width: 40px;
   top: 10px;
   left: 10px;
 }
 
 .App-header {
-  height: 60px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
