@@ -3,16 +3,18 @@ import "./App.css"; // Create an appropriate CSS file for styling
 import Experience from "./Experience";
 import CameraView from "./CameraView";
 import Webcam from "react-webcam";
+import Logo from "./assets/images.jpg";
 
 function App() {
   return (
     <div className="App">
       <header className="App-header">
         <img
-          src="/logo.png"
+          src={Logo}
           alt="logo"
           className="App-logo"
         />
+        <h2>Robotic Arm</h2>
       </header>
       <div className="New">
         <Webcam

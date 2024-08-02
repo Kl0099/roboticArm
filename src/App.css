@@ -8,6 +8,7 @@ body {
 .App-logo {
   height: 40px;
   position: absolute;
+  width: 60px;
   top: 10px;
   left: 10px;
 }

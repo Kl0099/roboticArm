@@ -3,7 +3,7 @@ import React, { Suspense, useEffect, useRef, useState } from "react";
 import Robot from "./models/Robot";
 import { OrbitControls } from "@react-three/drei";
 import NewButton from "./components/NewButton";
-
+import SaveFile from "./components/SaveFile";
 const Experience = () => {
   const [isRotating, setIsRotating] = useState(false);
   const [angles, setAngles] = useState(0);
@@ -49,10 +49,10 @@ const Experience = () => {
         <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
           {" "}
           <span>
-            Bottom Arm Rotation around X axis : {Math.abs(bottomArmRotation)}
+            Bottom Arm Rotation around X axis : {Math.abs(bottomArmRotation[0])}
           </span>
           <span>
-            Top Arm Rotation around X axis : {Math.abs(topArmRotation)}
+            Top Arm Rotation around X axis : {Math.abs(topArmRotation[0])}
           </span>
         </div>
         <div style={{ display: "flex" }}>
@@ -70,6 +70,10 @@ const Experience = () => {
             onClick={() => setAngles((prevRotete) => prevRotete + 0.003)}
           />
         </div>
+        <SaveFile
+          bottomArmRotation={bottomArmRotation}
+          topArmRotation={topArmRotation}
+        />
       </div>
     </div>
   );

@@ -85,7 +85,7 @@ const Robot = ({
         "XYZ"
       );
       // console.log(finalEuler.toArray().map(degToRad));
-      setBottomArmRotation(finalEuler.toArray().map(degToRad)[0]);
+      setBottomArmRotation(finalEuler.toArray().map(degToRad));
     }
   }, [rotete, ending]);
   useEffect(() => {
@@ -106,7 +106,7 @@ const Robot = ({
         rotationMatrixTopArm,
         "XYZ"
       );
-      settopArmRotation(finalEuler.toArray().map(degToRad)[0]);
+      settopArmRotation(finalEuler.toArray().map(degToRad));
     }
   }, [angles, endingTopArm]);
 
