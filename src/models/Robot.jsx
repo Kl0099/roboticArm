@@ -1,149 +1,114 @@
 import React, { useRef, useEffect, useState } from "react";
 import { useGLTF, useAnimations } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
+import * as THREE from "three";
 import robotScene from "../assets/3d/robotic_arm.glb";
 import { a } from "@react-spring/three";
-
+import { Vector3, Euler, Matrix4 } from "three";
+import { calculateAngles, calculateLengths } from "../utils/constants";
+import { degToRad, radToDeg } from "three/src/math/MathUtils.js";
 const Robot = ({
+  topArmRotation,
+  settopArmRotation,
   isRotating,
   setIsRotating,
   circular,
   angles,
   rotete,
+  setBottomArmRotation,
+  bottomArmRotation,
   ...props
 }) => {
   const group = useRef();
   const handRef = useRef(); // Ref for the hand part
   const { nodes, materials, animations } = useGLTF(robotScene);
-  const [stage, setCurrentStage] = useState(null);
-  const { actions } = useAnimations(animations, group);
-  const { gl, viewport } = useThree();
-  const lastX = useRef(0);
-  const rotationSpeed = useRef(0);
-  const dampingfactor = 0.95;
-  useFrame(() => {
-    if (!isRotating) {
-      rotationSpeed.current *= dampingfactor;
-      if (Math.abs(rotationSpeed.current) < 0.001) {
-        rotationSpeed.current = 0;
-      }
-      group.current.rotation.y += rotationSpeed.current;
-      // group.current.rotation.z += rotationSpeed.current;
-    } else {
-      const rotation = group.current.rotation.y;
-      const NormalizedRotation =
-        ((rotation % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
-      switch (true) {
-        case NormalizedRotation >= 5.45 && NormalizedRotation <= 5.85:
-          setCurrentStage(4);
-          break;
-        case NormalizedRotation >= 0.85 && NormalizedRotation <= 1.3:
-          setCurrentStage(3);
-          break;
-        case NormalizedRotation >= 2.4 && NormalizedRotation <= 2.6:
-          setCurrentStage(2);
-          break;
-        case NormalizedRotation >= 4.25 && NormalizedRotation <= 4.75:
-          setCurrentStage(1);
-          break;
-        default:
-          setCurrentStage(null);
-      }
-    }
-  });
+  const [ending, setEnding] = useState({ x: 0, y: 0, z: 0 });
+  const [endingTopArm, setendingTopArm] = useState({ x: 0, y: 0, z: 0 });
 
-  const handlePointerDown = (e) => {
-    e.stopPropagation();
-    e.preventDefault();
-    setIsRotating(true);
+  // Initial Euler angles bottom value
+  const initialEuler = new THREE.Euler(
+    nodes.arm2_03.rotation.x,
+    nodes.arm2_03.rotation.y,
+    nodes.arm2_03.rotation.z,
+    "XYZ"
+  );
+  // Initial Euler angles bottom value
+  const initialEulerTopArm = new THREE.Euler(
+    nodes.arm3_04.rotation.x,
+    nodes.arm3_04.rotation.y,
+    nodes.arm3_04.rotation.z,
+    "XYZ"
+  );
 
-    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-    lastX.current = clientX;
-  };
-  const handlePointerUp = (e) => {
-    e.stopPropagation();
-    e.preventDefault();
-    setIsRotating(false);
-  };
-  const handlePointermove = (e) => {
-    e.stopPropagation();
-    e.preventDefault();
-    if (isRotating) {
-      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-      const delta = (clientX - lastX.current) / viewport.width;
-      group.current.rotation.y += delta * 0.01 * Math.PI;
-      lastX.current = clientX;
-      rotationSpeed.current = delta * 0.01 * Math.PI;
-    }
-  };
+  // Create a rotation matrix
+  const rotationMatrix = new THREE.Matrix4();
+  const rotationMatrixTopArm = new THREE.Matrix4();
+  rotationMatrix.makeRotationFromEuler(initialEuler);
+  rotationMatrixTopArm.makeRotationFromEuler(initialEulerTopArm);
 
-  const handleKeyDown = (e) => {
-    if (e.key === "ArrowLeft") {
-      if (!isRotating) setIsRotating(true);
-      group.current.rotation.y += 0.01 * Math.PI;
-    } else if (e.key === "ArrowRight") {
-      if (!isRotating) setIsRotating(true);
-      group.current.rotation.y -= 0.01 * Math.PI;
-    }
-  };
-  const handleKeyUp = (e) => {
-    if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
-      setIsRotating(false);
-    }
-  };
-
-  // useEffect(() => {
-  //   const canvas = gl.domElement;
-  //   canvas.addEventListener("pointerdown", handlePointerDown);
-  //   canvas.addEventListener("pointerup", handlePointerUp);
-  //   canvas.addEventListener("pointermove", handlePointermove);
-  //   document.addEventListener("keydown", handleKeyDown);
-  //   document.addEventListener("keyup", handleKeyUp);
-  //   return () => {
-  //     canvas.removeEventListener("pointerdown", handlePointerDown);
-  //     canvas.removeEventListener("pointerup", handlePointerUp);
-  //     canvas.removeEventListener("pointermove", handlePointermove);
-  //     document.removeEventListener("keydown", handleKeyDown);
-  //     document.removeEventListener("keyup", handleKeyUp);
-  //   };
-  // }, [gl, handlePointerDown, handlePointerUp, handlePointermove]);
-
-  // for circular rotation
   useEffect(() => {
     nodes.arm2_03.rotation.y += circular; // or any other logic for rotation  yes this is one joint  and y
   }, [circular]);
   // for axis rotaion
   useEffect(() => {
+    //change this and find the angle
+    //angle 1
     nodes.arm3_04.rotation.x += angles; // or any other logic for rotation  yes this is one joint  and y
+    setendingTopArm({
+      x: nodes.arm3_04.rotation.x,
+      y: nodes.arm3_04.rotation.y,
+      z: nodes.arm3_04.rotation.z,
+    });
   }, [angles]);
   // for model rotation
   useEffect(() => {
     nodes.arm2_03.rotation.x += rotete; // or any other logic for rotation  yes this is one joint  and y
+    // console.log(nodes.arm2_03.rotation.x);
+    setEnding({
+      x: nodes.arm2_03.rotation.x,
+      y: nodes.arm2_03.rotation.y,
+      z: nodes.arm2_03.rotation.z,
+    });
   }, [rotete]);
 
-  // useEffect(() => {
-  //   // Log the nodes to inspect the structure and find the hand part
-  // console.log(nodes.arm1_02.rotation._x);
-  // console.log(nodes);
-  // }, [nodes]);
+  useEffect(() => {
+    if (ending.x !== 0) {
+      // Apply a new rotation (e.g., increment x by 0.1 radians)
+      const newEuler = new THREE.Euler(ending.x, ending.y, ending.z, "XYZ");
 
-  // useFrame((_, delta) => {
-  //   if (handRef.current) {
-  //     // Apply transformations to the hand part only
-  //     group.current.rotation.x += delta;
-  //     // nodes.arm1_02.rotation._x += 0.000000001;
-  //   }
-  // });
-  // useFrame((_, delta) => {
-  //   if (nodes.arm1_02) {
-  //     // Apply transformations to the arm1 part
-  //     // nodes.arm1_02.rotation.x += delta; // or any other logic for rotation bottom joint x
-  //     // nodes.arm3_04.rotation.x += delta; // or any other logic for rotation
-  //     // nodes.hand_05.rotation.x += delta; // or any other logic for rotation and this is hand
-  //     // nodes.base_00.rotation.y += delta; // or any other logic for rotation and this is base
-  //     // or any other logic for rotation and this is base
-  //   }
-  // });
+      // Update the rotation matrix
+      rotationMatrix.makeRotationFromEuler(newEuler);
+
+      // Extract the new angles
+      const finalEuler = new THREE.Euler().setFromRotationMatrix(
+        rotationMatrix,
+        "XYZ"
+      );
+      // console.log(finalEuler.toArray().map(degToRad));
+      setBottomArmRotation(finalEuler.toArray().map(degToRad)[0]);
+    }
+  }, [rotete, ending]);
+  useEffect(() => {
+    if (endingTopArm !== 0) {
+      // Apply a new rotation (e.g., increment x by 0.1 radians)
+      const newEuler = new THREE.Euler(
+        endingTopArm.x,
+        endingTopArm.y,
+        endingTopArm.z,
+        "XYZ"
+      );
+
+      // Update the rotation matrix
+      rotationMatrixTopArm.makeRotationFromEuler(newEuler);
+
+      // Extract the new angles
+      const finalEuler = new THREE.Euler().setFromRotationMatrix(
+        rotationMatrixTopArm,
+        "XYZ"
+      );
+      settopArmRotation(finalEuler.toArray().map(degToRad)[0]);
+    }
+  }, [angles, endingTopArm]);
 
   return (
     <a.group

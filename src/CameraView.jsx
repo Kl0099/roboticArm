@@ -3,8 +3,11 @@ import Webcam from "react-webcam";
 
 const CameraView = () => {
   return (
-    <div className="camera-view">
-      <Webcam />
+    <div>
+      <Webcam
+        width={"200"}
+        height={"200"}
+      />
     </div>
   );
 };
